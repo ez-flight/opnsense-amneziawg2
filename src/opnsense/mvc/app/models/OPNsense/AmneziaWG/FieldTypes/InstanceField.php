@@ -1,6 +1,6 @@
 <?php
 
-namespace OPNsense\AmneziaWG;
+namespace OPNsense\AmneziaWG\FieldTypes;
 
 use OPNsense\Base\FieldTypes\ArrayField;
 
@@ -20,4 +20,4 @@ class InstanceField extends ArrayField
         }
         return parent::actionPostLoadingEvent();
     }
-} 
+}

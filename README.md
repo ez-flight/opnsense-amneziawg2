@@ -316,7 +316,7 @@ curl --interface awg0 ifconfig.me
 | Сервисный скрипт | `/usr/local/opnsense/scripts/AmneziaWG/amneziawg-service-control.php` |
 | Логи (типично) | `/var/log/system.log` (фильтр по AmneziaWG / awg) |
 
-Имена интерфейсов: `awg0`, `awg1`, … (см. `InstanceField.php`).
+Имена интерфейсов: `awg0`, `awg1`, … (см. `models/.../FieldTypes/InstanceField.php`).
 
 ---
 
