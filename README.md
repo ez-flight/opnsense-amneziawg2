@@ -139,24 +139,24 @@ make package
 
 Проверка: из каталога `amneziawg` файл `../../Mk/plugins.mk` должен существовать (`ls ../../Mk/plugins.mk`).
 
-После успешной сборки в каталоге плагина появится файл **`.pkg`**. Имя задаёт OPNsense (часто с суффиксом **`-devel`**, если плагин в tier development), например: **`os-amneziawg-devel-1.1.pkg`**. Точное имя смотрите в выводе `make package` или командой `ls -la *.pkg`.
+После успешной сборки готовый **`.pkg` лежит не в корне плагина**, а в подкаталоге **`work/pkg/`** (так устроен [Mk/plugins.mk](https://github.com/opnsense/plugins/blob/master/Mk/defaults.mk) OPNsense: `PKGDIR=work/pkg`). Имя задаётся при сборке, часто **`os-amneziawg-devel-1.1.pkg`** (суффикс `-devel` у tier development).
 
 #### 2.4. Установите собранный пакет
 
-Из того же каталога, где выполняли `make package`:
+Из каталога плагина (где запускали `make package`):
 
 ```bash
-ls -la *.pkg
-pkg add ./os-amneziawg*.pkg
+ls -la work/pkg/
+pkg add work/pkg/os-amneziawg-devel-1.1.pkg
 ```
 
-Если `pkg: No match` — оболочка не нашла файлы по маске; укажите имя явно (скопируйте из `ls`):
+Подставьте точное имя из `ls work/pkg/`. Короткий вариант:
 
 ```bash
-pkg add ./os-amneziawg-devel-1.1.pkg
+pkg add work/pkg/os-amneziawg*.pkg
 ```
 
-Либо поиск: `find . -maxdepth 3 -name 'os-amneziawg*.pkg'`.
+Если `ls *.pkg` в корне плагина пишет **No match** — это нормально: ищите пакет только в **`work/pkg/`**. Установка без расширения `.pkg` (`pkg add os-amneziawg-devel-1.1`) не сработает — нужен путь к файлу.
 
 #### 2.5. Перезапустите `configd` и очистите кэш меню веб-интерфейса
 
@@ -280,7 +280,7 @@ curl --interface awg0 ifconfig.me
 | Импорт не видит параметры 2.0 | Убедитесь, что используется этот репозиторий (**ez-flight**), в `.conf` есть **[Interface]** / **[Peer]** и полный набор **S3**, **S4**; при отсутствии полей плагин подставит дефолты — они могут не совпасть с сервером. |
 | **H1…H4** «неправильный формат» | В плагине допустимы одно число или диапазон **без пробелов** (`мин-макс`). Копируйте значение из рабочего `.conf` как есть. |
 | Нет интернета через туннель | MSS (п. 4.3), **AllowedIPs**, маршрутизация/шлюз, **Outbound NAT** на **awg0**. |
-| **`pkg add` → No match** | Пакет называется иначе, чем `os-amneziawg-1.1.pkg` — часто **`os-amneziawg-devel-1.1.pkg`**. См. `ls *.pkg`, затем `pkg add ./os-amneziawg*.pkg` или полное имя файла. |
+| **`pkg add` → No match** | Готовый `.pkg` в каталоге **`work/pkg/`**, не в корне плагина. См. `ls work/pkg/` и `pkg add work/pkg/os-amneziawg*.pkg`. Имя часто **`os-amneziawg-devel-1.1.pkg`**. |
 
 ### Альтернативный способ установки
 
