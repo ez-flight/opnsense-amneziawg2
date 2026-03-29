@@ -28,8 +28,12 @@
                         alert("{{ lang._('Error parsing configuration:') }} " + response.message);
                     }
                 },
-                error: function() {
-                    alert("{{ lang._('Error parsing configuration.') }}");
+                error: function(xhr) {
+                    var msg = "{{ lang._('Error parsing configuration.') }}";
+                    if (xhr.responseText && xhr.responseText.length < 500) {
+                        msg += " " + xhr.status + ": " + xhr.responseText;
+                    }
+                    alert(msg);
                 }
             });
         });

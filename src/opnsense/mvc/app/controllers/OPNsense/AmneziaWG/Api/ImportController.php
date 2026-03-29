@@ -56,7 +56,10 @@ class ImportController extends ApiControllerBase
     
     private function parseAmneziaWGConfig($config_text)
     {
-        $lines = explode("\n", $config_text);
+        if (strncmp($config_text, "\xEF\xBB\xBF", 3) === 0) {
+            $config_text = substr($config_text, 3);
+        }
+        $lines = preg_split("/\r\n|\n|\r/", $config_text);
         $interface_section = false;
         $peer_section = false;
         $parsed = [
@@ -73,12 +76,12 @@ class ImportController extends ApiControllerBase
             if (empty($line) || strpos($line, '#') === 0) {
                 continue;
             }
-            if ($line === '[Interface]') {
+            if (strcasecmp($line, '[Interface]') === 0) {
                 $interface_section = true;
                 $peer_section = false;
                 continue;
             }
-            if ($line === '[Peer]') {
+            if (strcasecmp($line, '[Peer]') === 0) {
                 $interface_section = false;
                 $peer_section = true;
                 continue;
@@ -138,27 +141,32 @@ class ImportController extends ApiControllerBase
         return $parsed;
     }
     
+    /**
+     * Next free instance index (awg0, awg1, …) without loading Instance model.
+     * Import must work even if FieldTypes/InstanceField is missing from disk (broken pkg);
+     * the full model is only needed when saving the instance.
+     */
     private function getNextInstanceNumber()
     {
-        // Get existing instances using the Instance model
-        $instanceModel = new \OPNsense\AmneziaWG\Instance();
-        $instances = $instanceModel->getNodes();
-        
         $used_numbers = [];
-        if ($instances && isset($instances['instances']['instance'])) {
-            foreach ($instances['instances']['instance'] as $instance) {
-                if (isset($instance['instance'])) {
-                    $used_numbers[] = (int)$instance['instance'];
+        try {
+            $cfg = Config::getInstance()->object();
+            if (isset($cfg->OPNsense->amneziawg->instance->instances->instance)) {
+                foreach ($cfg->OPNsense->amneziawg->instance->instances->instance as $inst) {
+                    if (isset($inst->instance)) {
+                        $used_numbers[] = (int)(string)$inst->instance;
+                    }
                 }
             }
+        } catch (\Throwable $e) {
+            return 0;
         }
-        
-        // Find the next available number
+
         $next_number = 0;
-        while (in_array($next_number, $used_numbers)) {
+        while (in_array($next_number, $used_numbers, true)) {
             $next_number++;
         }
-        
+
         return $next_number;
     }
 } 
