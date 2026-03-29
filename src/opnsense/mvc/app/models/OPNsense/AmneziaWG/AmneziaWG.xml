@@ -48,45 +48,53 @@
                 <Required>N</Required>
             </mtu>
             <jc type="IntegerField">
-                <Default>7</Default>
+                <Default>6</Default>
                 <Required>N</Required>
             </jc>
             <jmin type="IntegerField">
-                <Default>150</Default>
+                <Default>55</Default>
                 <Required>N</Required>
             </jmin>
             <jmax type="IntegerField">
-                <Default>1000</Default>
+                <Default>380</Default>
                 <Required>N</Required>
             </jmax>
             <s1 type="IntegerField">
-                <Default>117</Default>
+                <Default>72</Default>
                 <Required>N</Required>
             </s1>
             <s2 type="IntegerField">
-                <Default>321</Default>
+                <Default>56</Default>
                 <Required>N</Required>
             </s2>
-            <h1 type="IntegerField">
+            <s3 type="IntegerField">
+                <Default>32</Default>
+                <Required>N</Required>
+            </s3>
+            <s4 type="IntegerField">
+                <Default>16</Default>
+                <Required>N</Required>
+            </s4>
+            <h1 type="TextField">
                 <Default>2008066467</Default>
                 <Required>N</Required>
             </h1>
-            <h2 type="IntegerField">
+            <h2 type="TextField">
                 <Default>2351746464</Default>
                 <Required>N</Required>
             </h2>
-            <h3 type="IntegerField">
+            <h3 type="TextField">
                 <Default>3053333659</Default>
                 <Required>N</Required>
             </h3>
-            <h4 type="IntegerField">
+            <h4 type="TextField">
                 <Default>1789444460</Default>
                 <Required>N</Required>
             </h4>
-            <userland type="BooleanField">
-                <Default>0</Default>
+            <i1 type="TextField">
+                <Default></Default>
                 <Required>N</Required>
-            </userland>
+            </i1>
         </general>
         <peer>
             <public_key type="TextField">
@@ -106,7 +114,7 @@
                 <Required>N</Required>
             </endpoint>
             <persistent_keepalive type="IntegerField">
-                <Default>25</Default>
+                <Default>33</Default>
                 <Required>N</Required>
             </persistent_keepalive>
             <routes type="TextField">

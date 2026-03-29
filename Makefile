@@ -1,6 +1,6 @@
 PLUGIN_NAME=     amneziawg
-PLUGIN_VERSION=        1.0
-PLUGIN_COMMENT=        AmneziaWG VPN Plugin
+PLUGIN_VERSION=        1.1
+PLUGIN_COMMENT=        AmneziaWG 2.0 VPN Plugin
 PLUGIN_DEPENDS=        amnezia-kmod amnezia-tools
 PLUGIN_MAINTAINER= antspopov@gmail.com
 

@@ -95,11 +95,13 @@
                                 if (data.jmax) $("#instance\\.jmax").val(data.jmax);
                                 if (data.s1) $("#instance\\.s1").val(data.s1);
                                 if (data.s2) $("#instance\\.s2").val(data.s2);
+                                if (data.s3) $("#instance\\.s3").val(data.s3);
+                                if (data.s4) $("#instance\\.s4").val(data.s4);
                                 if (data.h1) $("#instance\\.h1").val(data.h1);
                                 if (data.h2) $("#instance\\.h2").val(data.h2);
                                 if (data.h3) $("#instance\\.h3").val(data.h3);
                                 if (data.h4) $("#instance\\.h4").val(data.h4);
-                                if (data.userland) $("#instance\\.userland").prop('checked', data.userland === '1');
+                                if (data.i1) $("#instance\\.i1").val(data.i1);
                                 if (data.peer_public_key) $("#instance\\.peer_public_key").val(data.peer_public_key);
                                 if (data.peer_preshared_key) $("#instance\\.peer_preshared_key").val(data.peer_preshared_key);
                                 if (data.peer_endpoint) $("#instance\\.peer_endpoint").val(data.peer_endpoint);

@@ -1,14 +1,16 @@
-AmneziaWG is a VPN plugin for OPNsense that provides secure tunneling capabilities
-with obfuscation features. This plugin supports multiple instances, similar to the
-WireGuard plugin architecture.
+AmneziaWG is a VPN plugin for OPNsense that provides secure tunneling with
+AmneziaWG 2.0 obfuscation (Jc, Jmin, Jmax, S1–S4, H1–H4, optional I1/CPS).
+Multiple instances are supported, similar to the WireGuard plugin architecture.
 
 Features:
-- Multi-instance support for multiple AmneziaWG connections
+- Multi-instance support for multiple AmneziaWG 2.0 connections
 - Web-based configuration interface
 - Built-in key pair generation
 - Real-time status monitoring
-- Configuration import functionality
+- Configuration import from .conf (including bivlked/amneziawg-installer client exports)
 - Automatic service management
 - Status monitoring and statistics
+
+Requires amnezia-tools and amnezia-kmod built for AmneziaWG 2.0.
 
 WWW: https://github.com/amnezia/amneziawg 

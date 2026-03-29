@@ -62,8 +62,8 @@ class ImportController extends ApiControllerBase
         $parsed = [
             'name' => '', 'description' => '', 'private_key' => '', 'listen_port' => '', 'address' => '',
             'dns' => '', 'table' => '', 'postup' => '', 'preup' => '', 'mtu' => '',
-            'jc' => '', 'jmin' => '', 'jmax' => '', 's1' => '', 's2' => '', 'h1' => '', 'h2' => '',
-            'h3' => '', 'h4' => '', 'userland' => '',
+            'jc' => '', 'jmin' => '', 'jmax' => '', 's1' => '', 's2' => '', 's3' => '', 's4' => '',
+            'h1' => '', 'h2' => '', 'h3' => '', 'h4' => '', 'i1' => '',
             'peer_public_key' => '', 'peer_preshared_key' => '', 'peer_allowed_ips' => '',
             'peer_endpoint' => '', 'peer_persistent_keepalive' => '', 'peer_routes' => ''
         ];
@@ -105,11 +105,15 @@ class ImportController extends ApiControllerBase
                     case 'Jmax': $parsed['jmax'] = $value; break;
                     case 'S1': $parsed['s1'] = $value; break;
                     case 'S2': $parsed['s2'] = $value; break;
+                    case 'S3': $parsed['s3'] = $value; break;
+                    case 'S4': $parsed['s4'] = $value; break;
                     case 'H1': $parsed['h1'] = $value; break;
                     case 'H2': $parsed['h2'] = $value; break;
                     case 'H3': $parsed['h3'] = $value; break;
                     case 'H4': $parsed['h4'] = $value; break;
-                    case 'UserLand': $parsed['userland'] = ($value === 'true' || $value === '1') ? '1' : '0'; break;
+                    case 'I1': $parsed['i1'] = $value; break;
+                    /* AWG 1.x only; ignored for AWG 2.0 */
+                    case 'UserLand': break;
                 }
             } elseif ($peer_section) {
                 switch ($key) {

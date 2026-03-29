@@ -1,204 +1,144 @@
-# AmneziaWG Plugin for OPNsense
+# AmneziaWG для OPNsense
 
-## Overview
+Плагин управляет туннелями **AmneziaWG 2.0** на OPNsense: несколько независимых подключений (инстансов), веб-интерфейс, импорт клиентских `.conf`, генерация ключей и конфигов для `awg-quick`.
 
-AmneziaWG is a VPN plugin for OPNsense that provides secure tunneling capabilities with obfuscation features. This plugin has been redesigned to support multiple instances, similar to the WireGuard plugin architecture.
+Форк/ветка на базе [antspopov/opnsense_amnezia_plugin](https://github.com/antspopov/opnsense_amnezia_plugin), доработанная под протокол **2.0** (параметры как у [bivlked/amneziawg-installer](https://github.com/bivlked/amneziawg-installer)).
 
-## Features
+---
 
-### Multi-Instance Support
-- Create multiple AmneziaWG connections to different servers
-- Each instance has its own configuration and interface
-- Automatic instance numbering (0, 1, 2, ...) with corresponding interface names (awg0, awg1, awg2, ...)
-- One peer per instance (as per AmneziaWG requirements)
+## Совместимость
 
-### Web Interface
-- Grid-based interface similar to WireGuard
-- Inline editing capabilities
-- Built-in key pair generation
-- Real-time status monitoring
-- Import functionality for AmneziaWG configuration files
+| Версия | Поддержка |
+|--------|-----------|
+| **AmneziaWG 2.0** | Да — основной сценарий |
+| **AmneziaWG 1.x** | Нет — другой набор полей и поведение пиров |
 
-### Configuration Management
-- Automatic configuration file generation
-- Service management (start, stop, restart, reconfigure)
-- Status monitoring and statistics
-- Automatic configuration file cleanup on instance deletion
+Клиенты: Amnezia VPN ≥ 4.8.12.7, AmneziaWG для Windows ≥ 2.0.0, либо конфиги, сгенерированные установщиком выше. Подробнее: [ADVANCED.en.md — client compatibility](https://github.com/bivlked/amneziawg-installer/blob/main/ADVANCED.en.md).
 
-## Architecture
+---
 
-### Models
-- **Instance.xml** - Instance configuration model
-- **General.xml** - General settings model
-- **InstanceField.php** - Field class for automatic interface naming
+## Требования
 
-### Controllers
-- **InstanceController.php** - CRUD operations for instances
-- **GeneralController.php** - General settings management
-- **ServiceController.php** - Service control operations
-- **ImportController.php** - Configuration import functionality
+На шлюзе должны быть установлены **`amnezia-kmod`** и **`amnezia-tools`** той же линии, что и AmneziaWG 2.0 (утилиты `awg`, `awg-quick`, модуль ядра с тем же протоколом). Плагин только собирает XML → `.conf`; совместимость с сервером определяется версией стека на OPNsense.
 
-### Views
-- **general.volt** - Main interface with instance grid and general settings
-- **diagnostics.volt** - Status monitoring interface
-- **import.volt** - Configuration import interface
-- **dialogEditInstance.xml** - Instance editing form
+Зависимости пакета плагина задаются в `Makefile` (`PLUGIN_DEPENDS`).
 
-### Scripts
-- **amneziawg-service-control.php** - Main service control script
-- **gen_keypair.py** - Key pair generation using `awg` command
-- **awg_show.py** - Status monitoring
-- **migrate-to-multi-instance.php** - Migration from old architecture
+---
 
-## Configuration Structure
+## Возможности
 
-```
-OPNsense.amneziawg
-├── general.general.enabled
-└── instance.instances
-    ├── [uuid1]
-    │   ├── enabled
-    │   ├── name
-    │   ├── instance (auto-numbered)
-    │   ├── description
-    │   ├── private_key
-    │   ├── listen_port
-    │   ├── address
-    │   ├── dns
-    │   ├── table
-    │   ├── postup
-    │   ├── preup
-    │   ├── mtu
-    │   ├── jc, jmin, jmax, s1, s2, h1, h2, h3, h4
-    │   ├── userland
-    │   ├── peer_public_key
-    │   ├── peer_preshared_key
-    │   ├── peer_allowed_ips
-    │   ├── peer_endpoint
-    │   ├── peer_persistent_keepalive
-    │   └── peer_routes
-    └── [uuid2]
-        └── ...
-```
+- Несколько инстансов (`awg0`, `awg1`, …), на инстанс — один peer (как в типичной схеме AmneziaWG).
+- Сетка настроек, редактирование, включение/выключение.
+- Генерация ключевой пары через `awg genkey` / `awg pubkey`.
+- Импорт текста или файла `.conf` (в т.ч. экспорт с VPS после `amneziawg-installer`).
+- Статус и трафик через интеграцию с `awg show`.
+- Управление сервисом через `configd` (старт / стоп / reconfigure).
 
-## Installation
+---
 
-1. Install the plugin via OPNsense package manager
-2. Access the interface at `/ui/amneziawg/`
-3. Enable AmneziaWG in general settings
-4. Create and configure instances
+## Параметры AmneziaWG 2.0 в секции `[Interface]`
 
-## Usage
+Плагин хранит и записывает в `/usr/local/etc/amneziawg/awgX.conf` те же ключи, что и клиент/сервер установщика:
 
-### Creating Instances
-1. Navigate to VPN → AmneziaWG → Instances
-2. Click "Add" to create a new instance
-3. Configure the instance settings:
-   - **Name**: Instance name (e.g., "awg0")
-   - **Description**: Optional description
-   - **Private Key**: Your private key (use "Generate" button)
-   - **Listen Port**: Local listening port
-   - **Address**: Interface address (e.g., "10.8.1.4/32")
-   - **DNS**: DNS servers for the tunnel
-   - **Peer Public Key**: Server's public key
-   - **Peer Endpoint**: Server endpoint (IP:port)
-   - **Peer Allowed IPs**: Allowed IP ranges
-   - **AmneziaWG Parameters**: Jc, Jmin, Jmax, S1, S2, H1, H2, H3, H4, UserLand
+| Параметр | Описание |
+|----------|----------|
+| `Jc`, `Jmin`, `Jmax` | Обфускация (junk) |
+| `S1` … `S4` | Отступы сообщений (2.0 добавляет `S3`, `S4`) |
+| `H1` … `H4` | Идентификаторы/диапазоны; допускается формат **одного числа** или **`min-max`** (как в выдаче установщика) |
+| `I1` | Опционально, CPS / concealment — длинная строка из `awgsetup_cfg.init` или клиентского `.conf` |
 
-### Importing Configurations
-1. Navigate to VPN → AmneziaWG → Import
-2. Paste AmneziaWG configuration or select a .conf file
-3. Click "Import"
-4. Review and edit the parsed configuration
-5. Save the instance
+Строки **`UserLand`** (эпоха 1.x) не используются и при импорте игнорируются. Пустые **`I2` … `I5`** в импортируемом файле можно не переносить — генератор пишет только нужные для 2.0 поля.
 
-### Monitoring Status
-1. Navigate to VPN → AmneziaWG → Status
-2. View real-time status of all instances
-3. Monitor transfer statistics and connection status
+**Клиентский** профиль часто без `ListenPort` — это нормально: при пустом порте в модели строка `ListenPort` в `.conf` не добавляется.
 
-## Service Management
+---
 
-The plugin automatically loads the `if_amn` kernel module when needed.
+## Установка
 
-### Manual Service Control
+1. Установить зависимости ядра и пользовательских утилит AmneziaWG 2.0 (порты/пакеты под вашу версию OPNsense).
+2. Собрать и установить плагин (см. раздел [Сборка](#сборка)) или поставить готовый пакет, если он есть в вашей среде.
+3. В веб-интерфейсе: **VPN → AmneziaWG** — включить сервис в общих настройках, создать инстанс или импортировать `.conf`.
+4. Применить конфигурацию (**Apply** / перезапуск сервиса AmneziaWG).
+
+---
+
+## Использование
+
+### Инстансы
+
+**VPN → AmneziaWG → Instances** — добавление и правка: ключи, адрес туннеля, DNS, endpoint пира, `AllowedIPs`, параметры 2.0 (`Jc` … `I1`). Для полей **H1–H4** допустимы и число, и диапазон `мин-макс`.
+
+### Импорт
+
+**VPN → AmneziaWG → Import** — вставить текст или выбрать `.conf`, затем **Import**. Данные подставляются в форму нового инстанса; проверьте имя, номер инстанса и при необходимости поправьте поля перед сохранением.
+
+### Статус
+
+**VPN → AmneziaWG → Status** — сводка по инстансам (через скрипты статуса плагина).
+
+---
+
+## Файлы на системе
+
+| Назначение | Путь |
+|------------|------|
+| Конфиг инстанса | `/usr/local/etc/amneziawg/awg0.conf`, `awg1.conf`, … |
+| Сервисный скрипт | `/usr/local/opnsense/scripts/AmneziaWG/amneziawg-service-control.php` |
+| Логи (типично) | `/var/log/system.log` (фильтр по AmneziaWG / awg) |
+
+Имена интерфейсов: `awg0`, `awg1`, … (см. `InstanceField.php`).
+
+---
+
+## CLI (`configctl`)
+
 ```bash
-# Start all enabled instances
 configctl amneziawg start
-
-# Stop all instances
 configctl amneziawg stop
-
-# Restart all instances
 configctl amneziawg restart
-
-# Reconfigure specific instance
-configctl amneziawg reconfigure <uuid>
-
-# Show status
+configctl amneziawg reconfigure              # все инстансы
+configctl amneziawg reconfigure <uuid>       # только указанный инстанс
 configctl amneziawg status
-
-# Generate key pair
+configctl amneziawg show                     # подробный вывод (awg_show.py)
 configctl amneziawg gen_keypair
+configctl amneziawg remove_instance <uuid>   # снять туннель и удалить awgX.conf
 ```
 
-### Configuration Files
-- Instance configurations: `/usr/local/etc/amnezia/awgX.conf`
-- Service script: `/usr/local/opnsense/scripts/AmneziaWG/amneziawg-service-control.php`
+Точный набор действий см. в `src/opnsense/service/conf/actions.d/actions_amneziawg.conf`.
 
-## Migration from Old Architecture
+---
 
-### Automatic Migration
-```bash
-# Backup current configuration
-cp /conf/config.xml /conf/config.xml.backup
+## Устранение неполадок
 
-# Run migration script
-/usr/local/opnsense/scripts/AmneziaWG/migrate-to-multi-instance.php migrate
-```
+- **Не поднимается интерфейс** — проверьте, что AmneziaWG включён в общих настройках плагина; что `awg-quick` и модуль ядра соответствуют 2.0; `awg show` с консоли.
+- **Импорт не парсится** — в `[Interface]` должны быть `PrivateKey`, в `[Peer]` — `PublicKey`; для клиента с сервера скопируйте полный блок параметров 2.0.
+- **Несовпадение с сервером** — все obfuscation-параметры (`Jc` … `I1`) должны совпадать с сервером; endpoint и ключи — как в рабочем клиенте.
 
-### Manual Migration
-1. Access the web interface
-2. Create new instances and copy settings from old configuration
-3. Enable the instances and AmneziaWG service
+---
 
-## Troubleshooting
+## Сборка
 
-### Common Issues
-1. **Instance not starting**: Check if AmneziaWG is enabled globally
-2. **Configuration file not found**: Verify instance is properly configured
-3. **Import not working**: Check configuration format and required fields
+В дереве исходников OPNsense (каталог плагинов):
 
-### Logs
-- Service logs: `/var/log/system.log` (filter by "AmneziaWG")
-- Configuration validation: Check web interface for field validation errors
-
-## Development
-
-### Building the Plugin
 ```bash
 cd plugins/security/amneziawg
 make package
 ```
 
-### File Structure
-```
-plugins/security/amneziawg/
-├── src/
-│   ├── opnsense/
-│   │   ├── mvc/app/
-│   │   │   ├── controllers/OPNsense/AmneziaWG/
-│   │   │   ├── models/OPNsense/AmneziaWG/
-│   │   │   └── views/OPNsense/AmneziaWG/
-│   │   ├── scripts/AmneziaWG/
-│   │   ├── service/conf/actions.d/
-│   │   └── etc/inc/plugins.inc.d/
-│   └── ...
-├── Makefile
-├── README.md
-└── pkg-descr
-```
+Локально в клоне этого репозитория структура та же: `Makefile`, `src/opnsense/...` — переносите каталог плагина в дерево `opnsense/plugins` согласно [документации сборки OPNsense](https://docs.opnsense.org/development/examples/helloworld.html).
 
-## License
+Зависимости для разработки: см. комментарии в `Makefile` (`amnezia-tools`, `amnezia-kmod` из портов).
 
-This plugin is licensed under the same terms as OPNsense. 
+---
+
+## Лицензия
+
+Как у OPNsense / исходного плагина — см. файлы в репозитории upstream.
+
+---
+
+## Ссылки
+
+- [AmneziaWG (upstream)](https://github.com/amnezia/amneziawg)
+- [Установщик сервера AWG 2.0 (bivlked)](https://github.com/bivlked/amneziawg-installer)
+- [Исходный плагин OPNsense](https://github.com/antspopov/opnsense_amnezia_plugin)

@@ -111,7 +111,7 @@
         <id>instance.jc</id>
         <label>Jc</label>
         <type>text</type>
-        <help>AmneziaWG jc parameter.</help>
+        <help>AmneziaWG 2.0 Jc (junk packet count, typically 4–8).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -120,7 +120,7 @@
         <id>instance.jmin</id>
         <label>Jmin</label>
         <type>text</type>
-        <help>AmneziaWG jmin parameter.</help>
+        <help>AmneziaWG 2.0 Jmin (min junk size, bytes).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -129,7 +129,7 @@
         <id>instance.jmax</id>
         <label>Jmax</label>
         <type>text</type>
-        <help>AmneziaWG jmax parameter.</help>
+        <help>AmneziaWG 2.0 Jmax (max junk size, bytes).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -138,7 +138,7 @@
         <id>instance.s1</id>
         <label>S1</label>
         <type>text</type>
-        <help>AmneziaWG s1 parameter.</help>
+        <help>AmneziaWG 2.0 S1 (init message padding).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -147,7 +147,25 @@
         <id>instance.s2</id>
         <label>S2</label>
         <type>text</type>
-        <help>AmneziaWG s2 parameter.</help>
+        <help>AmneziaWG 2.0 S2 (response padding). Must differ from S1+56.</help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>instance.s3</id>
+        <label>S3</label>
+        <type>text</type>
+        <help>AmneziaWG 2.0 S3 (cookie message padding).</help>
+        <grid_view>
+            <visible>false</visible>
+        </grid_view>
+    </field>
+    <field>
+        <id>instance.s4</id>
+        <label>S4</label>
+        <type>text</type>
+        <help>AmneziaWG 2.0 S4 (data message padding).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -156,7 +174,7 @@
         <id>instance.h1</id>
         <label>H1</label>
         <type>text</type>
-        <help>AmneziaWG h1 parameter.</help>
+        <help>AmneziaWG 2.0 H1 (init message id). Must not overlap H2–H4.</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -165,7 +183,7 @@
         <id>instance.h2</id>
         <label>H2</label>
         <type>text</type>
-        <help>AmneziaWG h2 parameter.</help>
+        <help>AmneziaWG 2.0 H2 (response message id).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -174,7 +192,7 @@
         <id>instance.h3</id>
         <label>H3</label>
         <type>text</type>
-        <help>AmneziaWG h3 parameter.</help>
+        <help>AmneziaWG 2.0 H3 (cookie message id).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
@@ -183,20 +201,18 @@
         <id>instance.h4</id>
         <label>H4</label>
         <type>text</type>
-        <help>AmneziaWG h4 parameter.</help>
+        <help>AmneziaWG 2.0 H4 (data message id).</help>
         <grid_view>
             <visible>false</visible>
         </grid_view>
     </field>
     <field>
-        <id>instance.userland</id>
-        <label>Userland</label>
-        <type>checkbox</type>
-        <help>Enable userland mode.</help>
+        <id>instance.i1</id>
+        <label>I1 (CPS)</label>
+        <type>text</type>
+        <help>AmneziaWG 2.0 optional CPS concealment (I1). Copy from server awgsetup_cfg.init if used; leave empty if not.</help>
         <grid_view>
             <visible>false</visible>
-            <type>boolean</type>
-            <formatter>boolean</formatter>
         </grid_view>
     </field>
     <!-- Peer settings -->

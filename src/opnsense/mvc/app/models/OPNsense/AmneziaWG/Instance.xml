@@ -1,7 +1,7 @@
 <model>
     <mount>//OPNsense/amneziawg/instance</mount>
     <description>AmneziaWG instance configuration</description>
-    <version>1.0.0</version>
+    <version>1.1.1</version>
     <items>
         <instances>
             <instance type=".\InstanceField">
@@ -46,35 +46,42 @@
                     <MaximumValue>9300</MaximumValue>
                 </mtu>
                 <jc type="IntegerField">
-                    <Default>7</Default>
+                    <Default>6</Default>
                 </jc>
                 <jmin type="IntegerField">
-                    <Default>150</Default>
+                    <Default>55</Default>
                 </jmin>
                 <jmax type="IntegerField">
-                    <Default>1000</Default>
+                    <Default>380</Default>
                 </jmax>
                 <s1 type="IntegerField">
-                    <Default>117</Default>
+                    <Default>72</Default>
                 </s1>
                 <s2 type="IntegerField">
-                    <Default>321</Default>
+                    <Default>56</Default>
                 </s2>
-                <h1 type="IntegerField">
+                <s3 type="IntegerField">
+                    <Default>32</Default>
+                </s3>
+                <s4 type="IntegerField">
+                    <Default>16</Default>
+                </s4>
+                <!-- H1–H4: single uint32 or AWG 2.0 range "min-max" (same as installer output) -->
+                <h1 type="TextField">
                     <Default>2008066467</Default>
                 </h1>
-                <h2 type="IntegerField">
+                <h2 type="TextField">
                     <Default>2351746464</Default>
                 </h2>
-                <h3 type="IntegerField">
+                <h3 type="TextField">
                     <Default>3053333659</Default>
                 </h3>
-                <h4 type="IntegerField">
+                <h4 type="TextField">
                     <Default>1789444460</Default>
                 </h4>
-                <userland type="BooleanField">
-                    <Default>0</Default>
-                </userland>
+                <i1 type="TextField">
+                    <Default></Default>
+                </i1>
                 <!-- Peer settings (only one peer per instance) -->
                 <peer_public_key type="TextField">
                     <Required>Y</Required>
@@ -90,7 +97,7 @@
                     <ValidationMessage>A peer endpoint is required</ValidationMessage>
                 </peer_endpoint>
                 <peer_persistent_keepalive type="IntegerField">
-                    <Default>25</Default>
+                    <Default>33</Default>
                     <MinimumValue>1</MinimumValue>
                     <MaximumValue>86400</MaximumValue>
                 </peer_persistent_keepalive>

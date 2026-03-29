@@ -189,6 +189,14 @@ function generate_amneziawg_config($instance_uuid, $instance_config)
     if (!empty($instance_config['s2'])) {
         $conf_content .= "S2 = {$instance_config['s2']}\n";
     }
+
+    if (!empty($instance_config['s3'])) {
+        $conf_content .= "S3 = {$instance_config['s3']}\n";
+    }
+
+    if (!empty($instance_config['s4'])) {
+        $conf_content .= "S4 = {$instance_config['s4']}\n";
+    }
     
     if (!empty($instance_config['h1'])) {
         $conf_content .= "H1 = {$instance_config['h1']}\n";
@@ -205,9 +213,9 @@ function generate_amneziawg_config($instance_uuid, $instance_config)
     if (!empty($instance_config['h4'])) {
         $conf_content .= "H4 = {$instance_config['h4']}\n";
     }
-    
-    if (!empty($instance_config['userland']) && $instance_config['userland'] == '1') {
-        $conf_content .= "UserLand = true\n";
+
+    if (!empty($instance_config['i1']) && trim((string)$instance_config['i1']) !== '') {
+        $conf_content .= 'I1 = ' . trim($instance_config['i1']) . "\n";
     }
     
     $conf_content .= "\n[Peer]\n";
