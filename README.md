@@ -280,7 +280,8 @@ curl --interface awg0 ifconfig.me
 | Импорт не видит параметры 2.0 | Убедитесь, что используется этот репозиторий (**ez-flight**), в `.conf` есть **[Interface]** / **[Peer]** и полный набор **S3**, **S4**; при отсутствии полей плагин подставит дефолты — они могут не совпасть с сервером. |
 | **H1…H4** «неправильный формат» | В плагине допустимы одно число или диапазон **без пробелов** (`мин-макс`). Копируйте значение из рабочего `.conf` как есть. |
 | Нет интернета через туннель | MSS (п. 4.3), **AllowedIPs**, маршрутизация/шлюз, **Outbound NAT** на **awg0**. |
-| **`pkg add` → No match** | Готовый `.pkg` в каталоге **`work/pkg/`**, не в корне плагина. См. `ls work/pkg/` и `pkg add work/pkg/os-amneziawg*.pkg`. Имя часто **`os-amneziawg-devel-1.1.pkg`**. |
+| **`pkg add` → No match** | Готовый `.pkg` в каталоге **`work/pkg/`**, не в корне плагина. См. `ls work/pkg/` и `pkg add work/pkg/os-amneziawg*.pkg`. Имя часто **`os-amneziawg-devel-1.1_1.pkg`** (см. `PLUGIN_REVISION` в `Makefile`). |
+| **PHP: `FieldTypes\InstanceField missing`** | Исправлено в репозитории: класс лежит в `FieldTypes/InstanceField.php`. Пересоберите пакет с **актуального `git pull`**, установите заново. Проверка: `test -f /usr/local/opnsense/mvc/app/models/OPNsense/AmneziaWG/FieldTypes/InstanceField.php`. |
 
 ### Альтернативный способ установки
 
