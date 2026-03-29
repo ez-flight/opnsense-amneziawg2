@@ -110,10 +110,12 @@ awg-quick --version
 #### 2.1. Установите инструменты для сборки
 
 ```bash
-pkg install git gmake
+pkg install git
 ```
 
-Если `pkg` выдаёт segmentation fault, используйте `pkg-static install git gmake`.
+Сборка плагина идёт **встроенным в систему BSD make** (`/usr/bin/make`). Пакет **gmake** (GNU make) не нужен и **нельзя** вызывать `gmake package` — в `Makefile` используется директива `.include`, она есть только у BSD make (ошибка `missing separator` на строке с `.include`).
+
+Если `pkg` выдаёт segmentation fault, используйте `pkg-static install git`.
 
 #### 2.2. Клонируйте репозиторий плагина
 
@@ -126,10 +128,14 @@ cd opnsense-amneziawg2
 #### 2.3. Соберите пакет плагина
 
 ```bash
-gmake package
+make package
 ```
 
-Если `gmake` нет, выполните `make package`. После успешной сборки в текущей папке появится файл вида **`os-amneziawg-<версия>.pkg`** (номер версии берётся из `Makefile`, поле `PLUGIN_VERSION`).
+Используйте именно **`make`** (BSD make), не **`gmake`**.
+
+Плагин должен лежать в **дереве исходников OPNsense** (рядом с каталогом `Mk`), иначе не найдётся `../../Mk/plugins.mk`. Обычно клон [opnsense/opnsense](https://github.com/opnsense/opnsense) или набор **opnsense-code** разворачивают локально, затем подкладывают каталог плагина в `plugins/security/amneziawg` и собирают оттуда. Сборка «голого» клона только в `/tmp/opnsense-amneziawg2` без дерева OPNsense завершится ошибкой отсутствия `Mk/plugins.mk`.
+
+После успешной сборки появится файл вида **`os-amneziawg-<версия>.pkg`** (версия из `PLUGIN_VERSION` в `Makefile`).
 
 #### 2.4. Установите собранный пакет
 
@@ -262,7 +268,7 @@ curl --interface awg0 ifconfig.me
 
 ### Альтернативный способ установки
 
-Если `gmake package` / `make package` на роутере завершается ошибкой, соберите `.pkg` на другой системе с **FreeBSD 14** и подходящим деревом OPNsense (например **26.x**), затем скопируйте `os-amneziawg-*.pkg` на роутер и выполните `pkg add`. Ручное копирование файлов плагина в дерево OPNsense возможно, но сложнее и не рекомендуется.
+Если `make package` на роутере завершается ошибкой (нет `Mk/plugins.mk` или не то дерево), соберите `.pkg` на машине с **полным деревом OPNsense** и **FreeBSD**, соответствующим вашей версии OPNsense, затем скопируйте `os-amneziawg-*.pkg` на роутер и выполните `pkg add`. Ручное копирование файлов плагина в дерево OPNsense без сборки пакета возможно, но сложнее и не рекомендуется.
 
 ### Заключение
 
@@ -323,7 +329,6 @@ configctl amneziawg remove_instance <uuid>   # снять туннель и уд
 ```bash
 cd plugins/security/amneziawg   # каталог с этим плагином в дереве opnsense/plugins
 make package
-# или: gmake package
 ```
 
 В корне клонированного репозитория тот же `Makefile` и `src/opnsense/...`; при сборке «вне дерева» OPNsense может потребоваться полное окружение **opnsense-tools** — проще собирать на самой OPNsense или в jail с установленным набором разработчика.
