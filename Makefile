@@ -6,7 +6,7 @@
 
 .if exists(../../Mk/plugins.mk)
 .else
-.error ../../Mk/plugins.mk not found: copy this plugin into opnsense/plugins (e.g. plugins/security/amneziawg), then run make package from that directory. See README.
+.error ../../Mk/plugins.mk missing. Clone https://github.com/opnsense/plugins then copy this tree to plugins/security/amneziawg and run make package there (see README).
 .endif
 
 PLUGIN_NAME=     amneziawg

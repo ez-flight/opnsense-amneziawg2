@@ -117,27 +117,33 @@ pkg install git
 
 Если `pkg` выдаёт segmentation fault, используйте `pkg-static install git`.
 
-#### 2.2. Клонируйте репозиторий плагина
+#### 2.2–2.3. Клон дерева `plugins` и установка исходников плагина на место
+
+Сборка **из одного только** `/tmp/opnsense-amneziawg2` **невозможна**: нужен репозиторий **[opnsense/plugins](https://github.com/opnsense/plugins)** — в нём лежит каталог **`Mk/`** с `plugins.mk`. Путь `/path/to/plugins/security/amneziawg` в документации — это **пример**, не команда для вставки в shell.
+
+Скопируйте блок целиком (пути реальные, `/tmp` можно заменить на другой каталог):
 
 ```bash
 cd /tmp
+rm -rf plugins opnsense-amneziawg2
+git clone --depth 1 https://github.com/opnsense/plugins.git
 git clone https://github.com/ez-flight/opnsense-amneziawg2.git
-cd opnsense-amneziawg2
-```
-
-#### 2.3. Соберите пакет плагина
-
-```bash
+rm -rf plugins/security/amneziawg
+mkdir -p plugins/security
+cp -R opnsense-amneziawg2 plugins/security/amneziawg
+cd plugins/security/amneziawg
 make package
 ```
 
-Используйте именно **`make`** (BSD make), не **`gmake`**.
+Используйте **`make`** (BSD make), не **`gmake`**.
 
-Плагин должен лежать в **дереве исходников OPNsense** (рядом с каталогом `Mk`), иначе не найдётся `../../Mk/plugins.mk`. Обычно клон [opnsense/opnsense](https://github.com/opnsense/opnsense) или набор **opnsense-code** разворачивают локально, затем подкладывают каталог плагина в `plugins/security/amneziawg` и собирают оттуда. Сборка «голого» клона только в `/tmp/opnsense-amneziawg2` без дерева OPNsense завершится ошибкой отсутствия `Mk/plugins.mk`.
+Проверка: из каталога `amneziawg` файл `../../Mk/plugins.mk` должен существовать (`ls ../../Mk/plugins.mk`).
 
-После успешной сборки появится файл вида **`os-amneziawg-<версия>.pkg`** (версия из `PLUGIN_VERSION` в `Makefile`).
+После успешной сборки в **`plugins/security/amneziawg`** появится **`os-amneziawg-<версия>.pkg`** (версия из `PLUGIN_VERSION` в `Makefile`).
 
 #### 2.4. Установите собранный пакет
+
+Из того же каталога, где собирали (где лежит `.pkg`):
 
 ```bash
 pkg add os-amneziawg-*.pkg
