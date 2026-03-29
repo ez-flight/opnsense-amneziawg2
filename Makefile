@@ -1,8 +1,13 @@
-# OPNsense plugins use BSD make syntax (.include). GNU gmake fails with "missing separator".
-# On OPNsense/FreeBSD always run: make package   (not gmake)
-ifdef .FEATURES
-$(error Do not use GNU make (gmake). Use BSD make: make package)
-endif
+# OPNsense plugins: BSD make only (.include). Do not use GNU gmake — use: make package
+#
+# This Makefile must live inside the official plugins tree, e.g.
+#   opnsense/plugins/security/amneziawg/Makefile
+# so ../../Mk/plugins.mk resolves (Mk lives under plugins/). A standalone clone in /tmp alone will not build.
+
+.if exists(../../Mk/plugins.mk)
+.else
+.error ../../Mk/plugins.mk not found: copy this plugin into opnsense/plugins (e.g. plugins/security/amneziawg), then run make package from that directory. See README.
+.endif
 
 PLUGIN_NAME=     amneziawg
 PLUGIN_VERSION=        1.1
